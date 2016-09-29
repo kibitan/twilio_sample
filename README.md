@@ -7,5 +7,7 @@ https://github.com/twilio/twilio-ruby
 railsとtwilioで電話を掛けてみた - Qiita
 http://qiita.com/shutokondo/items/aba3b96f80d7b8fc1e04
 
+```bash
 $ brew install ngrok
 $ bundle exec ruby twilio.rb
+```
