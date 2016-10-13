@@ -1,0 +1,6 @@
+# https://jp.twilio.com/console/phone-numbers/incoming
+export TWILIO_NUMBER=""
+
+# https://jp.twilio.com/console
+export TWILIO_SID=""
+export TWILIO_AUTH_TOKEN=""
