@@ -28,7 +28,7 @@ post '/call' do
   calling = client.account.calls.create(
     from: TWILIO_NUMBER,
     to:  params["to_number"],
-    url: (host_name + URI.encode("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}")).to_s,
+    url: host_name("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}"),
     method: "GET" # default は POST
   )
 
@@ -38,17 +38,29 @@ end
 get '/voice' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say params['say'], voice: 'alice', language: 'ja-jp'
-    r.Dial callerId: TWILIO_NUMBER do |d|
-      d.Number params["forward_number"]
+    r.Gather method: 'GET', action: host_name("/forward?number=#{params['forward_number']}") do |g|
+      g.Say '数字をプッシュして下さい', voice: 'alice', language: 'ja-jp'
     end
+    r.Say '番号が確認できませんでしたので、終了します', voice: 'alice', language: 'ja-jp'
+  end
+  render_xml response.text
+end
+
+get '/forward' do
+  response = Twilio::TwiML::Response.new do |r|
+    r.Say "電話を開始します", voice: 'alice', language: 'ja-jp'
+    r.Dial callerId: TWILIO_NUMBER do |d|
+      d.Number params["number"]
+    end
+    r.Say '通話が終了しました。またね！', voice: 'alice', language: 'ja-jp'
   end
   render_xml response.text
 end
 
 private
 
-def host_name
-  URI("#{request.env['rack.url_scheme']}://#{request.env["HTTP_HOST"]}")
+def host_name(str)
+  ( URI("#{request.env['rack.url_scheme']}://#{request.env["HTTP_HOST"]}") + URI.encode(str) ).to_s
 end
 
 def render_xml(xml)
