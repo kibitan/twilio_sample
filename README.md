@@ -1,11 +1,25 @@
+
 # twilio_sample
 
+## setup
 
-twilio/twilio-ruby: A Ruby gem for communicating with the Twilio API and generating TwiML
-https://github.com/twilio/twilio-ruby
+1. install dependencies
 
-railsとtwilioで電話を掛けてみた - Qiita
-http://qiita.com/shutokondo/items/aba3b96f80d7b8fc1e04
+```bash
+$ bundle install --path vendor/bundle
+$ cp .envrc.sample .envrc
+```
+
+2. set ACCOUNT SID, AUTH TOKEN, PHONE_NUMBER to .envrc
+
+```bash
+$ brew install direnv
+$ cp .envrc.sample .envrc
+$ vim .envrc
+$ direnv allow
+```
+
+## boot
 
 ```bash
 $ brew cask install ngrok
