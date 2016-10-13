@@ -28,16 +28,19 @@ post '/call' do
   calling = client.account.calls.create(
     from: TWILIO_NUMBER,
     to:  params["to_number"],
-    url: (host_name + URI.encode("/voice?say=#{params['say']}")).to_s,
+    url: (host_name + URI.encode("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}")).to_s,
     method: "GET" # default は POST
   )
 
-  return "calling to #{params['to_number']} !"
+  return "calling to #{params['to_number']}! forward to #{params['forward_number']}!"
 end
 
 get '/voice' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say params['say'], voice: 'alice', language: 'ja-jp'
+    r.Dial callerId: TWILIO_NUMBER do |d|
+      d.Number params["forward_number"]
+    end
   end
   render_xml response.text
 end
