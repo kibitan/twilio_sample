@@ -28,16 +28,27 @@ post '/call' do
   calling = client.account.calls.create(
     from: TWILIO_NUMBER,
     to:  params["to_number"],
-    url: (host_name + '/callback').to_s,
+    url: (host_name + URI.encode("/voice?say=#{params['say']}")).to_s,
     method: "GET" # default は POST
   )
+
+  return "calling to #{params['to_number']} !"
 end
 
-get '/callback' do
+get '/voice' do
+  response = Twilio::TwiML::Response.new do |r|
+    r.Say params['say'], voice: 'alice', language: 'ja-jp'
+  end
+  render_xml response.text
 end
 
 private
 
 def host_name
-  URI.parse("#{request.env['rack.url_scheme']}://#{request.env["HTTP_HOST"]}")
+  URI("#{request.env['rack.url_scheme']}://#{request.env["HTTP_HOST"]}")
+end
+
+def render_xml(xml)
+  content_type 'text/xml'
+  return xml
 end

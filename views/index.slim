@@ -1,6 +1,10 @@
 h1 hello
 
-label tel
 form action='/call' method='post'
-  input type='tel' name='to_number' value='+81'
+  p
+    label tel
+    input type='tel' name='to_number' value='+81'
+  p
+    label say
+    input type='text' name='say' value='こんにちは、きびたんです'
   input type='submit' value='call!'
