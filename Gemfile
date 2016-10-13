@@ -4,6 +4,7 @@ ruby '2.3.1'
 
 gem 'pry'
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'slim'
 gem 'better_errors'
 gem 'binding_of_caller'
