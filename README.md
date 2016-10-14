@@ -5,19 +5,19 @@
 
 1. install dependencies
 
-```bash
+  ```bash
 $ bundle install --path vendor/bundle
 $ cp .envrc.sample .envrc
-```
+  ```
 
-2. set ACCOUNT SID, AUTH TOKEN, PHONE_NUMBER to .envrc
+1. set ACCOUNT SID, AUTH TOKEN, PHONE_NUMBER to .envrc
 
-```bash
+  ```bash
 $ brew install direnv
 $ cp .envrc.sample .envrc
 $ vim .envrc
 $ direnv allow
-```
+  ```
 
 ## boot
 
