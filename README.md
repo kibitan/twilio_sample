@@ -7,7 +7,6 @@
 
   ```bash
 $ bundle install --path vendor/bundle
-$ cp .envrc.sample .envrc
   ```
 
 1. set ACCOUNT SID, AUTH TOKEN, PHONE_NUMBER to .envrc
