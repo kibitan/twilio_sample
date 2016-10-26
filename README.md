@@ -26,6 +26,11 @@ $ bundle exec ruby twilio.rb
 $ ngrok http 4567
 ```
 
+or
+
+```
+$ foreman start
+```
 ## console
 
 ```bash
