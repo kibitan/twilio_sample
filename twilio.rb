@@ -29,31 +29,50 @@ post '/call' do
     from: TWILIO_NUMBER,
     to:  params["to_number"],
     url: host_name("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}"),
-    method: "GET" # default は POST
+    method: :post # default は POST
   )
 
   return "calling to #{params['to_number']}! forward to #{params['forward_number']}!"
 end
 
-get '/voice' do
+post '/voice' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say params['say'], voice: 'alice', language: 'ja-jp'
-    r.Gather method: 'GET', action: host_name("/forward?number=#{params['forward_number']}") do |g|
-      g.Say '数字をプッシュして下さい', voice: 'alice', language: 'ja-jp'
+    # https://jp.twilio.com/docs/api/twiml/gather#attributes
+    r.Gather method: :post, numDigits: 1, action: host_name("/forward?number=#{params['forward_number']}") do |g|
+      g.Say '番号をダイヤルして下さい', voice: 'alice', language: 'ja-jp'
     end
-    r.Say '番号が確認できませんでしたので、終了します', voice: 'alice', language: 'ja-jp'
+    # https://jp.twilio.com/docs/api/twiml/redirect#attributes
+    r.Redirect '/failuer', method: :post
   end
   render_xml response.text
 end
 
-get '/forward' do
+post '/failuer' do
+  response = Twilio::TwiML::Response.new do |r|
+    r.Say '番号が確認できませんでしたので、終了します', voice: 'alice', language: 'ja-jp'
+  end
+
+  render_xml response.text
+end
+
+post '/forward' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say "電話を開始します", voice: 'alice', language: 'ja-jp'
     r.Dial callerId: TWILIO_NUMBER do |d|
       d.Number params["number"]
     end
+    # it will execute even when speaker finished the call
+    r.Redirect '/success', method: :post
+  end
+  render_xml response.text
+end
+
+post '/success' do
+  response = Twilio::TwiML::Response.new do |r|
     r.Say '通話が終了しました。またね！', voice: 'alice', language: 'ja-jp'
   end
+
   render_xml response.text
 end
 
