@@ -38,7 +38,10 @@ post '/call' do
     from: TWILIO_NUMBER,
     to:  params["to_number"],
     url: host_name("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}"),
-    method: :post # default は POST
+    method: :post,
+    status_callback: host_name("/result"),
+    status_callback_method: :post,
+    status_callback_event: [:completed]
   )
 
   content_type 'text/plain'
@@ -47,6 +50,10 @@ post '/call' do
 
   #{calling.pretty_inspect}
   EOS
+end
+
+post '/result' do
+  params.tapp
 end
 
 post '/voice' do
