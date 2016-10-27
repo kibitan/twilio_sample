@@ -24,6 +24,13 @@ get '/' do
   slim :index
 end
 
+get '/calling_detail' do
+  client = Twilio::REST::Client.new
+  calling_detail = client.account.calls(params['sid']).fetch
+  content_type 'text/plain'
+  return calling_detail.pretty_inspect
+end
+
 post '/call' do
   client = Twilio::REST::Client.new
   calling = client.account.calls.create(
