@@ -73,35 +73,12 @@ end
 post '/forward' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say "電話を開始します", voice: 'alice', language: 'ja-jp'
-    r.Dial callerId: TWILIO_NUMBER, action: host_name("/dialed"), method: :post do |d|
+    r.Dial callerId: TWILIO_NUMBER do |d|
       d.Number params["number"]
     end
+    # it will execute even when speaker finished the call
+    r.Redirect '/success', method: :post
   end
-  render_xml response.text
-end
-
-post '/dialed' do
-params.tapp
-
-  response = case params['DialCallStatus']
-  when 'completed'
-    Twilio::TwiML::Response.new { |r| r.Redirect '/success', method: :post }
-  when 'busy', 'no-answer', 'failed'
-    Twilio::TwiML::Response.new { |r| r.Redirect '/dialed_failuer', method: :post }
-  when 'canceled', 'answered'
-    raise 'UnExpectedStatus'
-  else
-    raise 'UnknownStatus'
-  end
-
-  render_xml response.text
-end
-
-post '/dialed_failuer' do
-  response = Twilio::TwiML::Response.new do |r|
-    r.Say '通話が確立できませんでしたので終了します', voice: 'alice', language: 'ja-jp'
-  end
-
   render_xml response.text
 end
 
