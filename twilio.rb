@@ -80,7 +80,7 @@ end
 post '/forward' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say "電話を開始します", voice: 'alice', language: 'ja-jp'
-    r.Dial callerId: TWILIO_NUMBER do |d|
+    r.Dial callerId: TWILIO_NUMBER, timeLimit: 10 do |d|
       d.Number params["number"]
     end
     # it will execute even when speaker finished the call
