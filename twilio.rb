@@ -26,6 +26,7 @@ end
 
 get '/calling_detail' do
   client = Twilio::REST::Client.new
+  # https://jp.twilio.com/docs/api/rest/call
   calling_detail = client.account.calls(params['sid']).fetch
   content_type 'text/plain'
   return calling_detail.pretty_inspect
@@ -40,7 +41,12 @@ post '/call' do
     method: :post # default は POST
   )
 
-  return "calling to #{params['to_number']}! forward to #{params['forward_number']}!"
+  content_type 'text/plain'
+  return <<-EOS
+  calling to #{params['to_number']}! forward to #{params['forward_number']}!
+
+  #{calling.pretty_inspect}
+  EOS
 end
 
 post '/voice' do
