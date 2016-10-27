@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'pry'
+require 'tapp'
 require 'better_errors'
 require 'slim'
 require 'twilio-ruby'
