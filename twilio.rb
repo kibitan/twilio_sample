@@ -37,9 +37,9 @@ post '/call' do
   calling = client.account.calls.create(
     from: TWILIO_NUMBER,
     to:  params["to_number"],
-    url: host_name("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}"),
+    url: url_for("/voice?say=#{params['say']}&forward_number=#{params['forward_number']}"),
     method: :post,
-    status_callback: host_name("/result"),
+    status_callback: url_for("/result"),
     status_callback_method: :post,
     status_callback_event: [:completed]
   )
@@ -60,7 +60,7 @@ post '/voice' do
   response = Twilio::TwiML::Response.new do |r|
     r.Say params['say'], voice: 'alice', language: 'ja-jp'
     # https://jp.twilio.com/docs/api/twiml/gather#attributes
-    r.Gather method: :post, numDigits: 1, action: host_name("/forward?number=#{params['forward_number']}") do |g|
+    r.Gather method: :post, numDigits: 1, action: url_for("/forward?number=#{params['forward_number']}") do |g|
       g.Say '番号をダイヤルして下さい', voice: 'alice', language: 'ja-jp'
     end
     # https://jp.twilio.com/docs/api/twiml/redirect#attributes
@@ -99,7 +99,7 @@ end
 
 private
 
-def host_name(str)
+def url_for(str)
   ( URI("#{request.env['rack.url_scheme']}://#{request.env["HTTP_HOST"]}") + URI.encode(str) ).to_s
 end
 
