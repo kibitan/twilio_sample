@@ -41,7 +41,9 @@ post '/call' do
     method: :post,
     status_callback: url_for("/result"),
     status_callback_method: :post,
-    status_callback_event: [:completed]
+    status_callback_event: [:completed],
+    fallback_url: url_for("/error"),
+    fallback_method: :post
   )
 
   content_type 'text/plain'
@@ -50,6 +52,14 @@ post '/call' do
 
   #{calling.pretty_inspect}
   EOS
+end
+
+post '/error' do
+  response = Twilio::TwiML::Response.new do |r|
+    r.Say "エラーコード#{params['ErrorCode']}が発生しました", voice: 'alice', language: 'ja-jp'
+  end
+
+  render_xml response.text
 end
 
 post '/result' do
@@ -95,6 +105,32 @@ post '/success' do
   end
 
   render_xml response.text
+end
+
+post '/error_call' do
+  client = Twilio::REST::Client.new
+  calling = client.account.calls.create(
+    from: TWILIO_NUMBER,
+    to:  params["to_number"],
+    url: url_for("/invalid_twiml"),
+    method: :post,
+    status_callback: url_for("/result"),
+    status_callback_method: :post,
+    status_callback_event: [:completed],
+    fallback_url: url_for("/error"),
+    fallback_method: :post
+  )
+
+  content_type 'text/plain'
+  return <<-EOS
+  calling to #{params['to_number']}!
+
+  #{calling.pretty_inspect}
+  EOS
+end
+
+post '/invalid_twiml' do
+  return render_xml 'hoge hoge'
 end
 
 private
